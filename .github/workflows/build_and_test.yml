@@ -29,10 +29,15 @@ jobs:
       with:
         required-ros-distributions: foxy
 
+    - name: Store all package names to ENV
+      run: |
+        echo "PACKAGE_NAMES=$(colcon list -nt | tr '\n' ' ')" >> $GITHUB_ENV
+
     - name: Run action-ros-ci
       id: action_ros_ci_step
       uses: ros-tooling/action-ros-ci@v0.1
       with:
+        package-name: ${{ env.PACKAGE_NAMES }}
         target-ros2-distro: foxy
         vcs-repo-file-url: build_depends.repos
         colcon-mixin-name: coverage-gcc coverage-pytest
