@@ -4,11 +4,13 @@ on:
   pull_request:
     branches:
       - ros2
+      - ros2-ci-test
       - ros2-v0.8.0-beta
       - ros2-v0.9.0-beta
   push:
     branches:
       - ros2
+      - ros2-ci-test
       - ros2-v0.8.0-beta
       - ros2-v0.9.0-beta
 jobs:
