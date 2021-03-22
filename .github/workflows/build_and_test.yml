@@ -31,6 +31,8 @@ jobs:
 
     - name: Store all package names to ENV
       run: |
+        mkdir vcs_dir
+        vcs import vcs_dir/ < build_depends.repos
         echo "PACKAGE_NAMES=$(colcon list -nt | tr '\n' ' ')" >> $GITHUB_ENV
 
     - name: Run action-ros-ci
