@@ -1,0 +1,50 @@
+name: Build and test on aarch64
+
+on:
+  schedule:
+    - cron: "0 19 * * *" # run at 4 AM JST
+  workflow_dispatch:
+  push:
+
+jobs:
+  build-and-test-aarch64:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - uses: ros-tooling/setup-ros@v0.2
+        with:
+          required-ros-distributions: galactic
+
+      - uses: uraimo/run-on-arch-action@v2.1.1
+        name: Run commands
+        with:
+          arch: aarch64
+          distro: ubuntu20.04
+
+          run: |
+            apt-get -y update
+            apt-get -y install python3-pip
+
+            PACKAGE_LIST=$(colcon list --names-only)
+
+            git config --local --unset-all http.https://github.com/.extraheader || true
+            git config --global url.https://${{ secrets.REPO_TOKEN }}@github.com.insteadOf 'https://github.com'
+
+            mkdir dependency_ws
+            vcs import dependency_ws < build_depends.repos
+            apt-get -y update
+            rosdep update
+            DEBIAN_FRONTEND=noninteractive rosdep install -y --from-paths . --ignore-src --rosdistro galactic
+
+            . /opt/ros/galactic/setup.sh
+            colcon build --event-handlers console_cohesion+ \
+              --packages-up-to $PACKAGE_LIST \
+              --cmake-args -DCMAKE_BUILD_TYPE=Release
+
+            . /opt/ros/galactic/setup.sh
+            colcon test --event-handlers console_cohesion+ \
+              --packages-select $PACKAGE_LIST \
+              --return-code-on-test-failure
