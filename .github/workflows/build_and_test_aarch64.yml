@@ -42,7 +42,7 @@ jobs:
             rosdep update
             DEBIAN_FRONTEND=noninteractive rosdep install -y --from-paths . --ignore-src --rosdistro galactic
 
-            set +e
+            set +u
             . /opt/ros/galactic/setup.bash
             colcon build --event-handlers console_cohesion+ \
               --packages-up-to $PACKAGE_LIST \
