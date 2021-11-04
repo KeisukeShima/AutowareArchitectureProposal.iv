@@ -42,12 +42,12 @@ jobs:
             rosdep update
             DEBIAN_FRONTEND=noninteractive rosdep install -y --from-paths . --ignore-src --rosdistro galactic
 
-            . /opt/ros/galactic/setup.sh
+            . /opt/ros/galactic/setup.bash
             colcon build --event-handlers console_cohesion+ \
               --packages-up-to $PACKAGE_LIST \
               --cmake-args -DCMAKE_BUILD_TYPE=Release
 
-            . /opt/ros/galactic/setup.sh
+            . /opt/ros/galactic/setup.bash
             colcon test --event-handlers console_cohesion+ \
               --packages-select $PACKAGE_LIST \
               --return-code-on-test-failure
