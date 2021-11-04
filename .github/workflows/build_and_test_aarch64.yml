@@ -21,19 +21,19 @@ jobs:
           distro: ubuntu20.04
 
           run: |
-            apt-get -y update
-            apt-get -y install python3-pip git
+            apt-get update -q -y
+            apt-get install -q -y python3-pip git
 
-            apt-get install -y curl gnupg2 lsb-release
+            apt-get install -q -y curl gnupg2 lsb-release
             curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
             echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null
-            apt-get update && apt-get install -y ros-foxy-desktop
-            apt-get install -y python3-colcon-common-extensions python3-vcstool
+            apt-get -q -y update && apt-get install -q -y ros-foxy-desktop
+            apt-get install -q -y python3-colcon-common-extensions python3-vcstool
 
             PACKAGE_LIST=$(colcon list --names-only)
 
             git config --local --unset-all http.https://github.com/.extraheader || true
-            git config --global url.https://${{ secrets.REPO_TOKEN }}@github.com.insteadOf 'https://github.com'
+            git config --global url.https://${{ secrets.GITHUB_TOKEN }}@github.com.insteadOf 'https://github.com'
 
             mkdir dependency_ws
             vcs import dependency_ws < build_depends.repos
