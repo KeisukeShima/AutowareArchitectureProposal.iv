@@ -38,6 +38,7 @@ jobs:
             mkdir dependency_ws
             vcs import dependency_ws < build_depends.repos
             apt-get -y update
+            rosdep init
             rosdep update
             DEBIAN_FRONTEND=noninteractive rosdep install -y --from-paths . --ignore-src --rosdistro galactic
 
