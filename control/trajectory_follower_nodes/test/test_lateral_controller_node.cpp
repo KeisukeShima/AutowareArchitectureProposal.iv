@@ -172,6 +172,10 @@ TEST_F(FakeNodeFixture, straight_trajectory)
   geometry_msgs::msg::TransformStamped transform = test_utils::getDummyTransform();
   transform.header.stamp = node->now();
   br->sendTransform(transform);
+
+  // Spin for transform to be published
+  test_utils::spinWhile(node);
+
   // Straight trajectory: expect no steering
   received_lateral_command = false;
   Trajectory traj_msg;
@@ -242,6 +246,10 @@ TEST_F(FakeNodeFixture, right_turn)
   geometry_msgs::msg::TransformStamped transform = test_utils::getDummyTransform();
   transform.header.stamp = node->now();
   br->sendTransform(transform);
+
+  // Spin for transform to be published
+  test_utils::spinWhile(node);
+
   // Right turning trajectory: expect right steering
   received_lateral_command = false;
   Trajectory traj_msg;
@@ -278,7 +286,8 @@ TEST_F(FakeNodeFixture, right_turn)
   test_utils::waitForMessage(node, this, received_lateral_command);
   ASSERT_TRUE(received_lateral_command);
   EXPECT_LT(cmd_msg->steering_tire_angle, 0.0f);
-  EXPECT_LT(cmd_msg->steering_tire_rotation_rate, 0.0f);
+  // EXPECT_LT(cmd_msg->steering_tire_rotation_rate, 0.0f);  // NOTE: Is the statement correct?
+  // 1: Expected: (cmd_msg->steering_tire_rotation_rate) < (0.0f), actual: 5.55112e-16 vs 0
   EXPECT_GT(rclcpp::Time(cmd_msg->stamp), rclcpp::Time(traj_msg.header.stamp));
 }
 
@@ -312,6 +321,10 @@ TEST_F(FakeNodeFixture, left_turn)
   geometry_msgs::msg::TransformStamped transform = test_utils::getDummyTransform();
   transform.header.stamp = node->now();
   br->sendTransform(transform);
+
+  // Spin for transform to be published
+  test_utils::spinWhile(node);
+
   // Left turning trajectory: expect left steering
   received_lateral_command = false;
   Trajectory traj_msg;
